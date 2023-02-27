@@ -1,26 +1,43 @@
 import datetime
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidget, QDialog, \
-    QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton
-from PyQt6.QtGui import QAction
+    QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar
+from PyQt6.QtGui import QAction, QIcon
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("IT Asset Management System")
+        self.setWindowIcon(QIcon('icons/computer.png'))
+        self.setMinimumSize(800, 600)
+
+        # Actions
+        add_asset_action = QAction(QIcon('icons/add.png'), 'New Asset', self)
+        add_asset_action.triggered.connect(self.insert)
+        exit_program_action = QAction(QIcon('icons/exit.png'), 'Exit', self)
+        about_program_action = QAction(QIcon('icons/info.png'), 'About', self)
+        edit_asset_action = QAction(QIcon('icons/edit.png'), 'Edit Asset',
+                                    self)
+        delete_asset_action = QAction(QIcon('icons/delete.png'),
+                                      'Delete Asset', self)
+        refresh_table_action = QAction(QIcon('icons/refresh.png'),
+                                       'Refresh Assets Table', self)
 
         # Menu Bar
         file_menu = self.menuBar().addMenu('&File')
-        file_menu_add = QAction('New Asset', self)
-        file_menu_add.triggered.connect(self.insert)
-        file_menu_exit = QAction('Exit', self)
-        file_menu.addActions([file_menu_add, file_menu_exit])
-
+        file_menu.addActions([add_asset_action, exit_program_action])
         help_menu = self.menuBar().addMenu('&Help')
-        help_menu_about = QAction('About', self)
-        help_menu.addAction(help_menu_about)
+        help_menu.addAction(about_program_action)
 
+        # Toolbar
+        toolbar = QToolBar()
+        toolbar.setMovable(True)
+        self.addToolBar(toolbar)
+        toolbar.addActions([add_asset_action, edit_asset_action,
+                            delete_asset_action, refresh_table_action])
+
+        # Asset Table
         self.asset_table = QTableWidget()
         self.asset_table.setColumnCount(5)
         self.asset_table.setHorizontalHeaderLabels(('ID',
@@ -30,7 +47,8 @@ class MainWindow(QMainWindow):
                                                     'Acquired'))
         self.setCentralWidget(self.asset_table)
 
-    def insert(self):
+    @staticmethod
+    def insert():
         dialog = InsertDialog()
         dialog.exec()
 
