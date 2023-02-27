@@ -1,8 +1,9 @@
-
+import datetime
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidget, QDialog, \
-    QVBoxLayout, QLabel, QLineEdit
+    QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton
 from PyQt6.QtGui import QAction
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -38,17 +39,62 @@ class InsertDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Add New Asset')
-        self.setFixedSize(300, 400)
+        self.setFixedSize(300, 500)
 
         layout = QVBoxLayout()
 
-        # Widgets
-        brand = QLineEdit()
-        category = QLineEdit()
-        department = QLineEdit()
-        status = QLineEdit()
-        layout.addWidget(brand)
-        layout.addWidget(category)
-        layout.addWidget(department)
-        layout.addWidget(status)
+        # id
+        id_label = QLabel('Asset ID: ')
+        asset_id = QLineEdit()
+        asset_id.setPlaceholderText('Automatically Generated')
+        asset_id.setDisabled(True)
+        layout.addWidget(id_label)
+        layout.addWidget(asset_id)
+
+        # brand
+        brand_label = QLabel('Asset Brand:')
+        self.brand = QComboBox()
+        brands = ['brand1', 'brand2']
+        self.brand.addItems(brands)
+        layout.addWidget(brand_label)
+        layout.addWidget(self.brand)
+
+        # category
+        category_label = QLabel('Asset Category:')
+        self.category = QComboBox()
+        categories = ['cat1', 'cat2']
+        self.category.addItems(categories)
+        layout.addWidget(category_label)
+        layout.addWidget(self.category)
+
+        # department
+        department_label = QLabel('Asset Department:')
+        self.department = QComboBox()
+        departments = ['None', 'IT']
+        self.department.addItems(departments)
+        layout.addWidget(department_label)
+        layout.addWidget(self.department)
+
+        # status
+        status_label = QLabel('Asset Status:')
+        self.status = QComboBox()
+        statuses = ['stat1', 'stat2']
+        self.status.addItems(statuses)
+        layout.addWidget(status_label)
+        layout.addWidget(self.status)
+
+        # submit button
+        button = QPushButton('Add Asset')
+        button.clicked.connect(self.add_asset)
+        layout.addWidget(button)
+
         self.setLayout(layout)
+
+    def add_asset(self):
+        brand = self.brand.currentText()
+        category = self.category.currentText()
+        department = self.department.currentText()
+        status = self.status.currentText()
+        acquired = datetime.datetime.now()
+        print(brand, category, department, status, acquired)
+
