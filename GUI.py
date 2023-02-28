@@ -1,7 +1,8 @@
 import datetime
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidget, QDialog, \
-    QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar
+    QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar, \
+    QStatusBar
 from PyQt6.QtGui import QAction, QIcon
 
 
@@ -47,10 +48,19 @@ class MainWindow(QMainWindow):
                                                     'Acquired'))
         self.setCentralWidget(self.asset_table)
 
+        # Status Bar
+        status_bar = QStatusBar()
+        status_label = QLabel('')
+        status_bar.addWidget(status_label)
+        self.setStatusBar(status_bar)
+
     @staticmethod
     def insert():
         dialog = InsertDialog()
         dialog.exec()
+
+    def edit(self):
+        pass
 
 
 class InsertDialog(QDialog):

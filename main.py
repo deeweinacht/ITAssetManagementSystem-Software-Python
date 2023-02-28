@@ -11,6 +11,7 @@ import sys
 from GUI import MainWindow
 
 
+
 application = QApplication(sys.argv)
 iams = MainWindow()
 iams.show()
