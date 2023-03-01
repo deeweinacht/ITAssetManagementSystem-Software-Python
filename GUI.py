@@ -1,6 +1,4 @@
-import datetime
-
-from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidget, QDialog, \
+from PyQt6.QtWidgets import QMainWindow, QTableWidget, QDialog, \
     QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar, \
     QStatusBar, QTableWidgetItem
 from PyQt6.QtGui import QAction, QIcon
@@ -18,6 +16,7 @@ class MainWindow(QMainWindow):
         add_asset_action = QAction(QIcon('icons/add.png'), 'New Asset', self)
         add_asset_action.triggered.connect(self.insert)
         exit_program_action = QAction(QIcon('icons/exit.png'), 'Exit', self)
+        exit_program_action.triggered.connect(self.close)
         about_program_action = QAction(QIcon('icons/info.png'), 'About', self)
         edit_asset_action = QAction(QIcon('icons/edit.png'), 'Edit Asset',
                                     self)
@@ -82,7 +81,7 @@ class MainWindow(QMainWindow):
         dialog = EditDialog(int(self.asset_table.item(selected_row, 0).text()))
         dialog.exec()
         self.load_table_data()
-
+        self.status_label.setText('Asset Updated!')
 
 
 class InsertDialog(QDialog):
@@ -239,22 +238,18 @@ class EditDialog(QDialog):
         for num, name in self.brands:
             if name == self.brand.currentText():
                 brand_num = num
-                print(brand_num)
                 break
         for num, name in self.categories:
             if name == self.category.currentText():
                 category_num = num
-                print(category_num)
                 break
         for num, name in self.departments:
             if name == self.department.currentText():
                 department_num = num
-                print(department_num)
                 break
         for num, name in self.statuses:
             if name == self.status.currentText():
                 status_num = num
-                print(status_num)
                 break
         db_connection = DatabaseConnection()
         db_connection.update_asset(self.asset_ID, brand_num, category_num,
@@ -270,7 +265,6 @@ class EditDialog(QDialog):
         self.statuses = db_connection.load_statuses()
 
         asset_tuple = db_connection.load_asset(self.asset_ID)
-        print(asset_tuple)
         for num, name in self.brands:
             if num == asset_tuple[1]:
                 self.asset_brand = name

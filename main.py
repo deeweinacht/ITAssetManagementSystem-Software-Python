@@ -10,7 +10,6 @@ import sys
 from GUI import MainWindow
 
 
-
 application = QApplication(sys.argv)
 asset_manager = MainWindow()
 asset_manager.show()
