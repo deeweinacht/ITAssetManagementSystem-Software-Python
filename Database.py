@@ -1,5 +1,6 @@
 import mysql.connector
 
+# Constants for default database operation
 HOST = 'localhost'
 USERNAME = 'root'
 PASSWORD = 'passw0rd!'
@@ -81,27 +82,30 @@ class DatabaseConnection:
             statuses.append((entry[0], entry[1]))
         return statuses
 
-    def insert_asset(self, brand, category, department, status):
+    def insert_asset(self, brand: int, category: int, department: int,
+                     status: int):
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute('INSERT into assets '
-                       '(assetID, brand, category, department, status, acquiredDate) '
+                       '(assetID, brand, category, department, status, '
+                       'acquiredDate) '
                        'VALUES (default, %s, %s, %s, %s, default)',
                        (brand, category, department, status))
         connection.commit()
         cursor.close()
         connection.close()
 
-    def load_asset(self, asset_id):
+    def load_asset(self, asset_ID: int):
         connection = self.connect()
         cursor = connection.cursor()
-        cursor.execute('Select * FROM assets WHERE assetID = %s', (asset_id,))
+        cursor.execute('Select * FROM assets WHERE assetID = %s', (asset_ID,))
         result = cursor.fetchone()
         cursor.close()
         connection.close()
         return result
 
-    def update_asset(self, asset_ID, brand, category, department, status):
+    def update_asset(self, asset_ID: int, brand: int, category: int,
+                     department: int, status: int):
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute('UPDATE assets set brand = %s, category = %s, '
@@ -111,5 +115,10 @@ class DatabaseConnection:
         cursor.close()
         connection.close()
 
-    def delete_asset(self):
-        pass
+    def delete_asset(self, asset_ID: int):
+        connection = self.connect()
+        cursor = connection.cursor()
+        cursor.execute('DELETE FROM assets WHERE assetID = %s', (asset_ID,))
+        connection.commit()
+        cursor.close()
+        connection.close()

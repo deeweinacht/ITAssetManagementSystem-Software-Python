@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QTableWidget, QDialog, \
     QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar, \
-    QStatusBar, QTableWidgetItem
+    QStatusBar, QTableWidgetItem, QGridLayout
 from PyQt6.QtGui import QAction, QIcon
 from Database import DatabaseConnection
 
@@ -23,6 +23,7 @@ class MainWindow(QMainWindow):
         edit_asset_action.triggered.connect(self.edit)
         delete_asset_action = QAction(QIcon('icons/delete.png'),
                                       'Delete Asset', self)
+        delete_asset_action.triggered.connect(self.delete)
         refresh_table_action = QAction(QIcon('icons/refresh.png'),
                                        'Refresh Assets Table', self)
         refresh_table_action.triggered.connect(self.load_table_data)
@@ -78,10 +79,21 @@ class MainWindow(QMainWindow):
 
     def edit(self):
         selected_row = self.asset_table.currentRow()
-        dialog = EditDialog(int(self.asset_table.item(selected_row, 0).text()))
+        selected_asset_ID = int(self.asset_table.item(selected_row, 0).text())
+        dialog = EditDialog(selected_asset_ID)
         dialog.exec()
         self.load_table_data()
         self.status_label.setText('Asset Updated!')
+
+    def delete(self):
+        selected_row = self.asset_table.currentRow()
+        print(selected_row)
+        selected_asset_ID = int(self.asset_table.item(selected_row, 0).text())
+        print(selected_asset_ID)
+        dialog = DeleteDialog(selected_asset_ID)
+        dialog.exec()
+        self.load_table_data()
+        self.status_label.setText('Asset Deleted!')
 
 
 class InsertDialog(QDialog):
@@ -283,3 +295,30 @@ class EditDialog(QDialog):
                 break
 
 
+class DeleteDialog(QDialog):
+    def __init__(self, asset_ID: int):
+        super().__init__()
+        self.setWindowTitle('Delete Asset')
+        self.asset_ID = asset_ID
+
+        layout = QGridLayout()
+        confirm_label = QLabel(f'Are you SURE you want to delete asset '
+                               f'#{self.asset_ID}')
+        yes_button = QPushButton('Yes')
+        no_button = QPushButton('No')
+
+        layout.addWidget(confirm_label, 0, 0, 1, 2)
+        layout.addWidget(yes_button, 1, 0)
+        layout.addWidget(no_button, 1, 1)
+        self.setLayout(layout)
+
+        yes_button.clicked.connect(self.delete_asset)
+        no_button.clicked.connect(self.cancel_delete)
+
+    def delete_asset(self):
+        db_connection = DatabaseConnection()
+        db_connection.delete_asset(self.asset_ID)
+        self.close()
+
+    def cancel_delete(self):
+        self.close()
