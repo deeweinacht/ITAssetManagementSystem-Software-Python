@@ -29,54 +29,70 @@ class DatabaseConnection:
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM assets_combined')
         result = cursor.fetchall()
+        cursor.close()
         connection.close()
         return result
 
     def load_brands(self):
-        brands = {}
+        brands = []
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM brands')
         result = cursor.fetchall()
+        cursor.close()
         connection.close()
         for entry in result:
-            brands.update({entry[0]: entry[1]})
+            brands.append((entry[0], entry[1]))
         return brands
     
     def load_categories(self):
-        categories = {}
+        categories = []
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM categories')
         result = cursor.fetchall()
+        cursor.close()
         connection.close()
         for entry in result:
-            categories.update({entry[0]: entry[1]})
+            categories.append((entry[0], entry[1]))
         return categories
     
     def load_departments(self):
-        departments = {}
+        departments = []
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM departments')
         result = cursor.fetchall()
+        cursor.close()
         connection.close()
         for entry in result:
-            departments.update({entry[0]: entry[1]})
+            departments.append((entry[0], entry[1]))
         return departments
     
     def load_statuses(self):
-        statuses = {}
+        statuses = []
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM statuses')
         result = cursor.fetchall()
+        cursor.close()
         connection.close()
         for entry in result:
-            statuses.update({entry[0]: entry[1]})
+            statuses.append((entry[0], entry[1]))
         return statuses
 
-    def insert_asset(self):
+    def insert_asset(self, brand, category, department, status):
+        connection = self.connect()
+        cursor = connection.cursor()
+        cursor.execute('INSERT into assets '
+                       '(assetID, brand, category, department, status, acquiredDate) '
+                       'VALUES (default, %s, %s, %s, %s, default)',
+                       (brand, category, department, status))
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+    def load_asset(self, asset_id):
         pass
 
 

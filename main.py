@@ -12,6 +12,6 @@ from GUI import MainWindow
 
 
 application = QApplication(sys.argv)
-iams = MainWindow()
-iams.show()
+asset_manager = MainWindow()
+asset_manager.show()
 sys.exit(application.exec())
