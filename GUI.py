@@ -2,8 +2,9 @@ import datetime
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidget, QDialog, \
     QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar, \
-    QStatusBar
+    QStatusBar, QTableWidgetItem
 from PyQt6.QtGui import QAction, QIcon
+from Database import DatabaseConnection
 
 
 class MainWindow(QMainWindow):
@@ -40,13 +41,16 @@ class MainWindow(QMainWindow):
 
         # Asset Table
         self.asset_table = QTableWidget()
-        self.asset_table.setColumnCount(5)
+        self.asset_table.setColumnCount(6)
         self.asset_table.setHorizontalHeaderLabels(('ID',
-                                                    'Description',
+                                                    'Brand',
+                                                    'Category',
                                                     'Department',
                                                     'Status',
                                                     'Acquired'))
+        self.asset_table.horizontalHeader().setStretchLastSection(True)
         self.setCentralWidget(self.asset_table)
+        self.load_table_data()
 
         # Status Bar
         status_bar = QStatusBar()
@@ -59,7 +63,15 @@ class MainWindow(QMainWindow):
         dialog = InsertDialog()
         dialog.exec()
 
-    def edit(self):
+    def load_table_data(self):
+        db_connection = DatabaseConnection()
+        asset_data = db_connection.load_all_assets()
+        self.asset_table.setRowCount(0)
+        for row_num, row_data in enumerate(asset_data):
+            self.asset_table.insertRow(row_num)
+            for col_num, value in enumerate(row_data):
+                self.asset_table.setItem(row_num, col_num,
+                                         QTableWidgetItem(str(value)))
         pass
 
 

@@ -5,8 +5,7 @@ of IT assets
 Copyright (C) 2023  Dee Weinacht
 """
 
-from PyQt6.QtWidgets import  QApplication
-from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QApplication
 import sys
 from GUI import MainWindow
 
