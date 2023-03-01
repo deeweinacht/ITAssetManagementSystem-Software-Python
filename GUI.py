@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         about_program_action = QAction(QIcon('icons/info.png'), 'About', self)
         edit_asset_action = QAction(QIcon('icons/edit.png'), 'Edit Asset',
                                     self)
+        edit_asset_action.triggered.connect(self.edit)
         delete_asset_action = QAction(QIcon('icons/delete.png'),
                                       'Delete Asset', self)
         refresh_table_action = QAction(QIcon('icons/refresh.png'),
@@ -60,12 +61,6 @@ class MainWindow(QMainWindow):
         self.status_bar.addWidget(self.status_label)
         self.setStatusBar(self.status_bar)
 
-    def insert(self):
-        dialog = InsertDialog()
-        dialog.exec()
-        self.load_table_data()
-        self.status_label.setText('New Asset Inserted!')
-
     def load_table_data(self):
         db_connection = DatabaseConnection()
         asset_data = db_connection.load_all_assets()
@@ -75,6 +70,19 @@ class MainWindow(QMainWindow):
             for col_num, value in enumerate(row_data):
                 self.asset_table.setItem(row_num, col_num,
                                          QTableWidgetItem(str(value)))
+
+    def insert(self):
+        dialog = InsertDialog()
+        dialog.exec()
+        self.load_table_data()
+        self.status_label.setText('New Asset Inserted!')
+
+    def edit(self):
+        selected_row = self.asset_table.currentRow()
+        dialog = EditDialog(int(self.asset_table.item(selected_row, 0).text()))
+        dialog.exec()
+        self.load_table_data()
+
 
 
 class InsertDialog(QDialog):
@@ -183,8 +191,7 @@ class EditDialog(QDialog):
 
         # id
         id_label = QLabel('Asset ID: ')
-        asset_id = QLineEdit()
-        asset_id.setPlaceholderText(asset_ID)
+        asset_id = QLineEdit(str(self.asset_ID))
         asset_id.setDisabled(True)
         layout.addWidget(id_label)
         layout.addWidget(asset_id)
@@ -193,6 +200,7 @@ class EditDialog(QDialog):
         brand_label = QLabel('Asset Brand:')
         self.brand = QComboBox()
         self.brand.addItems(dict(self.brands).values())
+        self.brand.setCurrentText(self.asset_brand)
         layout.addWidget(brand_label)
         layout.addWidget(self.brand)
 
@@ -200,6 +208,7 @@ class EditDialog(QDialog):
         category_label = QLabel('Asset Category:')
         self.category = QComboBox()
         self.category.addItems(dict(self.categories).values())
+        self.category.setCurrentText(self.asset_category)
         layout.addWidget(category_label)
         layout.addWidget(self.category)
 
@@ -207,6 +216,7 @@ class EditDialog(QDialog):
         department_label = QLabel('Asset Department:')
         self.department = QComboBox()
         self.department.addItems(dict(self.departments).values())
+        self.department.setCurrentText(self.asset_department)
         layout.addWidget(department_label)
         layout.addWidget(self.department)
 
@@ -214,35 +224,40 @@ class EditDialog(QDialog):
         status_label = QLabel('Asset Status:')
         self.status = QComboBox()
         self.status.addItems(dict(self.statuses).values())
+        self.status.setCurrentText(self.asset_status)
         layout.addWidget(status_label)
         layout.addWidget(self.status)
 
         # submit button
-        button = QPushButton('Add Asset')
-        button.clicked.connect(self.add_asset)
+        button = QPushButton('Update Asset')
+        button.clicked.connect(self.update_asset)
         layout.addWidget(button)
 
         self.setLayout(layout)
 
-    def add_asset(self):
+    def update_asset(self):
         for num, name in self.brands:
             if name == self.brand.currentText():
                 brand_num = num
+                print(brand_num)
                 break
         for num, name in self.categories:
             if name == self.category.currentText():
                 category_num = num
+                print(category_num)
                 break
         for num, name in self.departments:
             if name == self.department.currentText():
                 department_num = num
+                print(department_num)
                 break
         for num, name in self.statuses:
             if name == self.status.currentText():
                 status_num = num
+                print(status_num)
                 break
         db_connection = DatabaseConnection()
-        db_connection.insert_asset(brand_num, category_num,
+        db_connection.update_asset(self.asset_ID, brand_num, category_num,
                                    department_num, status_num)
 
         self.close()
@@ -253,5 +268,24 @@ class EditDialog(QDialog):
         self.categories = db_connection.load_categories()
         self.departments = db_connection.load_departments()
         self.statuses = db_connection.load_statuses()
+
+        asset_tuple = db_connection.load_asset(self.asset_ID)
+        print(asset_tuple)
+        for num, name in self.brands:
+            if num == asset_tuple[1]:
+                self.asset_brand = name
+                break
+        for num, name in self.categories:
+            if num == asset_tuple[2]:
+                self.asset_category = name
+                break
+        for num, name in self.departments:
+            if num == asset_tuple[3]:
+                self.asset_department = name
+                break
+        for num, name in self.statuses:
+            if num == asset_tuple[4]:
+                self.asset_status = name
+                break
 
 

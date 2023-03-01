@@ -93,11 +93,23 @@ class DatabaseConnection:
         connection.close()
 
     def load_asset(self, asset_id):
-        pass
+        connection = self.connect()
+        cursor = connection.cursor()
+        cursor.execute('Select * FROM assets WHERE assetID = %s', (asset_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        connection.close()
+        return result
 
-
-    def update_asset(self):
-        pass
+    def update_asset(self, asset_ID, brand, category, department, status):
+        connection = self.connect()
+        cursor = connection.cursor()
+        cursor.execute('UPDATE assets set brand = %s, category = %s, '
+                       'department = %s, status = %s WHERE assetID = %s',
+                        (brand, category, department, status, asset_ID))
+        connection.commit()
+        cursor.close()
+        connection.close()
 
     def delete_asset(self):
         pass
