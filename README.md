@@ -19,10 +19,11 @@ of IT assets**
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 **Description:**  
-Uicons by <a href="https://www.flaticon.com/uicons">Flaticon</a>
+
 
 **User's Guide:**  
 
 
 **Dependencies:**
+- UIcons by <a href="https://www.flaticon.com/uicons">Flaticon</a>
 - PyQt6 used under the GNU GPL v3.0 license

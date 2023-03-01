@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QTableWidget, QDialog, \
     QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar, \
-    QStatusBar, QTableWidgetItem, QGridLayout
+    QStatusBar, QTableWidgetItem, QGridLayout, QMessageBox
 from PyQt6.QtGui import QAction, QIcon
 from Database import DatabaseConnection
 
@@ -18,6 +18,7 @@ class MainWindow(QMainWindow):
         exit_program_action = QAction(QIcon('icons/exit.png'), 'Exit', self)
         exit_program_action.triggered.connect(self.close)
         about_program_action = QAction(QIcon('icons/info.png'), 'About', self)
+        about_program_action.triggered.connect(self.about)
         edit_asset_action = QAction(QIcon('icons/edit.png'), 'Edit Asset',
                                     self)
         edit_asset_action.triggered.connect(self.edit)
@@ -41,9 +42,18 @@ class MainWindow(QMainWindow):
         toolbar.addActions([add_asset_action, edit_asset_action,
                             delete_asset_action, refresh_table_action])
 
+        # Status Bar
+        self.status_bar = QStatusBar()
+        self.status_label = QLabel('')
+        self.status_label.setMinimumWidth(800)
+        self.status_bar.addWidget(self.status_label)
+        self.setStatusBar(self.status_bar)
+
         # Asset Table
         self.asset_table = QTableWidget()
+        self.asset_table.setSortingEnabled(True)
         self.asset_table.setColumnCount(6)
+        self.asset_table.verticalHeader().setVisible(False)
         self.asset_table.setHorizontalHeaderLabels(('ID',
                                                     'Brand',
                                                     'Category',
@@ -54,28 +64,23 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.asset_table)
         self.load_table_data()
 
-        # Status Bar
-        self.status_bar = QStatusBar()
-        self.status_label = QLabel('')
-        self.status_label.setMinimumWidth(800)
-        self.status_bar.addWidget(self.status_label)
-        self.setStatusBar(self.status_bar)
-
     def load_table_data(self):
         db_connection = DatabaseConnection()
         asset_data = db_connection.load_all_assets()
+        asset_data.sort()
         self.asset_table.setRowCount(0)
         for row_num, row_data in enumerate(asset_data):
             self.asset_table.insertRow(row_num)
             for col_num, value in enumerate(row_data):
                 self.asset_table.setItem(row_num, col_num,
                                          QTableWidgetItem(str(value)))
+        self.status_label.setText('All assets loaded!')
 
     def insert(self):
         dialog = InsertDialog()
         dialog.exec()
         self.load_table_data()
-        self.status_label.setText('New Asset Inserted!')
+        self.status_label.setText('New asset inserted!')
 
     def edit(self):
         selected_row = self.asset_table.currentRow()
@@ -83,7 +88,7 @@ class MainWindow(QMainWindow):
         dialog = EditDialog(selected_asset_ID)
         dialog.exec()
         self.load_table_data()
-        self.status_label.setText('Asset Updated!')
+        self.status_label.setText('Asset updated!')
 
     def delete(self):
         selected_row = self.asset_table.currentRow()
@@ -93,7 +98,11 @@ class MainWindow(QMainWindow):
         dialog = DeleteDialog(selected_asset_ID)
         dialog.exec()
         self.load_table_data()
-        self.status_label.setText('Asset Deleted!')
+        self.status_label.setText('Asset deleted!')
+
+    def about(self):
+        dialog = AboutDialog()
+        dialog.exec()
 
 
 class InsertDialog(QDialog):
@@ -322,3 +331,16 @@ class DeleteDialog(QDialog):
 
     def cancel_delete(self):
         self.close()
+
+
+class AboutDialog(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('About')
+        about_text = '''
+        This application was created using Python 3.10.
+        UIcons by Flaticon.
+        
+        Copyright (C) 2023  Dee Weinacht
+        '''
+        self.setText(about_text)
