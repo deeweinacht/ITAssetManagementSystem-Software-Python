@@ -1,7 +1,7 @@
-# ITAssetManagement-WebScraping-Python
+# ITAssetManagement-Software-Python
 
-**This GUI application interacts with a MySQL database to provide management
-of IT assets**
+**This GUI-based software application interacts with a MySQL database to 
+provide management of IT assets.**
 
     Copyright (C) 2023  Dee Weinacht
 
@@ -26,4 +26,5 @@ of IT assets**
 
 **Dependencies:**
 - UIcons by <a href="https://www.flaticon.com/uicons">Flaticon</a>
-- PyQt6 used under the GNU GPL v3.0 license
+- PyQt6 used under the GNU GPL v3 license
+- MySQL Connector/Python used under the GNU GPL v2 license
