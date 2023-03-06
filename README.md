@@ -1,4 +1,4 @@
-# ITAssetManagement-Software-Python
+# ITAssetManagementSystem-Software-Python
 
 **This GUI-based software application interacts with a MySQL database to 
 provide management of IT assets.**
