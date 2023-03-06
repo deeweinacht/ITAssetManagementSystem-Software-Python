@@ -9,13 +9,13 @@ DATABASE_NAME = 'it_asset_management'
 
 class DatabaseConnection:
     """
-    Class to represent database connections to MySQL databases.
+    Represents database connections to MySQL databases.
 
     Attributes:
-        host: str = HOST
-        username: str = USERNAME
-        password: str = PASSWORD
-        database_name: str = DATABASE_NAME
+        host
+        username
+        password
+        database_name
     """
     def __init__(self,
                  host: str = HOST,
