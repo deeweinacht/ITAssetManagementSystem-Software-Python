@@ -1,5 +1,5 @@
 """
-This GUI-based application interacts with a MySQL database to provide
+This GUI-based application interacts with a MySQL database server to provide
 management of IT assets.
 
 Copyright (C) 2023  Dee Weinacht
