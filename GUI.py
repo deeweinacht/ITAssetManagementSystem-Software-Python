@@ -1,3 +1,4 @@
+import mysql.connector.errors
 from PyQt6.QtWidgets import QMainWindow, QTableWidget, QDialog, \
     QVBoxLayout, QLabel, QLineEdit, QComboBox, QPushButton, QToolBar, \
     QStatusBar, QTableWidgetItem, QGridLayout, QMessageBox
@@ -80,8 +81,13 @@ class MainWindow(QMainWindow):
 
         :return: None
         """
-        db_connection = DatabaseConnection()
-        asset_data = db_connection.load_all_assets()
+        try:
+            db_connection = DatabaseConnection()
+            asset_data = db_connection.load_all_assets()
+        except mysql.connector.errors.DatabaseError:
+            self.status_label.setText('Database Error!')
+            return
+
         asset_data.sort()
         self.asset_table.setRowCount(0)
         for row_num, row_data in enumerate(asset_data):
